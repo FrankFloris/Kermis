@@ -6,13 +6,14 @@ public class Kermis {
 //	static Scanner scanner = new Scanner(System.in);
 	static int ritkeuze;
 	static ArrayList<Attractie> attractie = new ArrayList<>();
+	static int verkochteKaartjes;
+	static double totaleOmzet;
+	static double teBetalenBelasting = 0;
 	public static void main(String[] args) {
 		Kermis FranksKermis = new Kermis();
 		FranksKermis.kermisbouwen();
 		FranksKermis.adverteren();
-//		Attractie iets = new Botsauto();
-//		nietJuist();
-		selecteerRit();
+		FranksKermis.selecteerRit();
 //		Scanner scanner = new Scanner(System.in);S
 
 		
@@ -44,16 +45,33 @@ private void adverteren() {
 
 
 
-private static void selecteerRit() {
+public void selecteerRit() {
 	Scanner scanner = new Scanner(System.in);
 	if (scanner.hasNextInt()) {
 		int select = (scanner.nextInt()-1);
-		if (select > 0 && select <6) {
+		if (select >= 0 && select <6) {
 			System.out.println("Je koopt een kaartje voor " + attractie.get(select).naam);
 			attractie.get((select)).draaien();
 			System.out.println("Deze attractie kost: " + attractie.get(select).ritPrijs + " euro");
 			attractie.get(select).verkochteKaartjes++;
-			System.out.println("Totaal " + attractie.get(select).verkochteKaartjes + " kaartjes verkocht voor " + attractie.get(select).naam);
+			verkochteKaartjes++;
+			totaleOmzet += attractie.get(select).ritPrijs;
+			if (attractie.get(select) instanceof RisicoRijkeAttracties) {
+//				((RisicoRijkeAttracties) attractie.get(select)).opstellingsKeuring(attractie.get(select));
+				if (attractie.get(select) instanceof Hawaii) {
+					if (attractie.get(select).verkochteKaartjes % 10 ==0){
+						((RisicoRijkeAttracties) attractie.get(select)).opstellingsKeuring((attractie.get(select).verkochteKaartjes));
+					}
+				}
+				else if (attractie.get(select) instanceof Spin) {
+					if (attractie.get(select).verkochteKaartjes % 5 ==0){
+						(( RisicoRijkeAttracties)attractie.get(select)).opstellingsKeuring((attractie.get(select).verkochteKaartjes));
+					}
+				}
+			}
+		if (attractie.get(select) instanceof GokAttractie) {
+				((GokAttractie) attractie.get(select)).kansSpelBelastingBetalen((attractie.get(select).ritPrijs));
+			}
 			selecteerRit();
 		}
 		else {
@@ -62,10 +80,20 @@ private static void selecteerRit() {
 		}
 	}
 	else if (scanner.hasNext("o")){
-		System.out.println("Hoi");
+		for (Attractie attractie: attractie) {
+			System.out.println("Totale omzet voor " + attractie.naam + " is: " + (String.format("%.2f", attractie.verkochteKaartjes*attractie.ritPrijs)));
+		}
+		System.out.println("De totale omzet van de Kermis is: " + (String.format("%.2f", totaleOmzet)));
+		System.out.println("Te betalen belasting over gokattracties is: " + (String.format("%.2f",teBetalenBelasting )));
+		System.out.println("De winst is: " + (String.format("%.2f",(totaleOmzet-teBetalenBelasting))));
+		selecteerRit();
 		}
 	else if (scanner.hasNext("k")) {
-		System.out.println("dat is een k");
+		for (Attractie attractie: attractie) {
+			System.out.println("Totaal " + attractie.verkochteKaartjes + " kaartjes verkocht voor " + attractie.naam);
+		}
+		System.out.println("Totaal aantal verkochte kaartjes: " + verkochteKaartjes);
+		selecteerRit();
 	}
 	else {
 		System.out.println("Dat is geen geldige input, selecteer een nummer van 1-6 ");
@@ -74,4 +102,5 @@ private static void selecteerRit() {
 		
 	}
 	}
+
 }
